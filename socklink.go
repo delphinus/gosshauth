@@ -105,7 +105,9 @@ func SearchSockLinks() (socks SockLinks, err error) {
 		if err != nil {
 			return
 		}
-		socks = append(socks, &SockLink{p, st.ModTime()})
+		if st.Mode()&os.ModeSocket == os.ModeSocket {
+			socks = append(socks, &SockLink{p, st.ModTime()})
+		}
 	}
 	sort.Slice(socks, func(i, j int) bool {
 		return socks[i].ModTime.After(socks[j].ModTime)
