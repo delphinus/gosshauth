@@ -8,14 +8,17 @@ import (
 
 // Fixup is a command action for `fixup`.
 func Fixup(c *cli.Context) error {
-	if socks, err := SearchSockLinks(); err != nil {
+	socks, err := SearchSockLinks()
+	if err != nil {
 		return err
-	} else if err := FixSSHAuthSock(socks); err == ErrLinkIsValid {
+	}
+	err = SSHAuthSockEnv.FixWith(&socks.Newest().Path)
+	if err == ErrLinkIsValid {
 		return nil
 	} else if err != nil {
 		return err
 	}
-	fullPath, err := sshAuthSockPath.FullPath()
+	fullPath, err := SSHAuthSockPath.FullPath()
 	if err != nil {
 		return err
 	}

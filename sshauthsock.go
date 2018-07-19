@@ -11,12 +11,14 @@ import (
 // ErrLinkIsValid means it needs not to be fixed up.
 var ErrLinkIsValid = errors.New("Link is valid")
 
-type sshAuthPath string
+// AuthPath will be used for the path suitable for SSH_AUTH_SOCK
+type AuthPath string
 
-var sshAuthSockPath = sshAuthPath(filepath.Join("~", ".ssh", "auth_sock"))
+// SSHAuthSockPath means the path suitable for SSH_AUTH_SOCK
+var SSHAuthSockPath = AuthPath(filepath.Join("~", ".ssh", "auth_sock"))
 
 // FullPath returns the full path replaced ~ with the supplied dir.
-func (p *sshAuthPath) FullPath() (*string, error) {
+func (p *AuthPath) FullPath() (*string, error) {
 	u, err := user.Current()
 	if err != nil {
 		return nil, err
@@ -25,57 +27,54 @@ func (p *sshAuthPath) FullPath() (*string, error) {
 	return &fullPath, nil
 }
 
-type envPath struct {
+// EnvPath will be used for the path in SSH_AUTH_SOCK
+type EnvPath struct {
 	path string
 }
 
-var sshAuthSockEnv = &envPath{os.Getenv("SSH_AUTH_SOCK")}
+// SSHAuthSockEnv means the path in SSH_AUTH_SOCK
+var SSHAuthSockEnv = &EnvPath{os.Getenv("SSH_AUTH_SOCK")}
 
-func (env *envPath) isSymlink() (bool, error) {
-	st, err := os.Lstat(env.path)
+// FixWith fixes the path by the newest path for sock.
+func (p *EnvPath) FixWith(newest *PathString) error {
+	if isSymlink, err := p.isSymlink(); err != nil {
+		return err
+	} else if !isSymlink {
+		return p.fixNonSymlink(newest)
+	}
+	return p.fixSymlink(newest)
+}
+
+func (p *EnvPath) isSymlink() (bool, error) {
+	st, err := os.Lstat(p.path)
 	if err != nil {
 		return false, err
 	}
 	return st.Mode()&os.ModeSymlink != 0, nil
 }
 
-func (env *envPath) fixNonSymlink(newest *PathString) error {
-	if isEqual, err := newest.IsEvalEqual(&env.path); err != nil {
+func (p *EnvPath) fixNonSymlink(newest *PathString) error {
+	if isEqual, err := newest.IsEvalEqual(&p.path); err != nil {
 		return err
 	} else if isEqual {
 		return ErrLinkIsValid
 	}
-	fullPath, err := sshAuthSockPath.FullPath()
+	fullPath, err := SSHAuthSockPath.FullPath()
 	if err != nil {
 		return err
 	}
 	return os.Symlink(string(*newest), *fullPath)
 }
 
-func (env *envPath) fixSymlink(newest *PathString) error {
-	if target, err := os.Readlink(env.path); err != nil {
+func (p *EnvPath) fixSymlink(newest *PathString) error {
+	if target, err := os.Readlink(p.path); err != nil {
 		return err
 	} else if isEqual, err := newest.IsEvalEqual(&target); err != nil {
 		return err
 	} else if isEqual {
 		return ErrLinkIsValid
-	} else if err := os.Remove(env.path); err != nil {
+	} else if err := os.Remove(p.path); err != nil {
 		return err
 	}
-	return os.Symlink(string(*newest), env.path)
-}
-
-// FixSSHAuthSock returns info for the link in $SSH_AUTH_SOCK
-func FixSSHAuthSock(sls SockLinks) error {
-	socks, err := SearchSockLinks()
-	if err != nil {
-		return err
-	}
-	newest := &socks.Newest().Path
-	if isSymlink, err := sshAuthSockEnv.isSymlink(); err != nil {
-		return err
-	} else if !isSymlink {
-		return sshAuthSockEnv.fixNonSymlink(newest)
-	}
-	return sshAuthSockEnv.fixSymlink(newest)
+	return os.Symlink(string(*newest), p.path)
 }
