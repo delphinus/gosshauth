@@ -12,12 +12,36 @@ import (
 
 // SockLink is info for sock symlinks of SSH.
 type SockLink struct {
-	Path    string
+	Path    PathString
 	ModTime time.Time
 }
 
 // SockLinks is a set of *SockLink
 type SockLinks []*SockLink
+
+// Newest returns the newest SockLink
+func (sls SockLinks) Newest() (sl *SockLink) {
+	if len(sls) > 0 {
+		sl = sls[0]
+	}
+	return
+}
+
+// PathString is a path string
+type PathString string
+
+// IsEvalEqual returns true if the evaled path string is equal to target.
+func (ps *PathString) IsEvalEqual(target *string) (bool, error) {
+	resolved, err := filepath.EvalSymlinks(string(*ps))
+	if err != nil {
+		return false, err
+	}
+	resolvedTarget, err := filepath.EvalSymlinks(*target)
+	if err != nil {
+		return false, err
+	}
+	return resolved == resolvedTarget, nil
+}
 
 var (
 	filename      = []byte("Filename")
@@ -106,7 +130,7 @@ func SearchSockLinks() (socks SockLinks, err error) {
 			return
 		}
 		if st.Mode()&os.ModeSocket == os.ModeSocket {
-			socks = append(socks, &SockLink{p, st.ModTime()})
+			socks = append(socks, &SockLink{PathString(p), st.ModTime()})
 		}
 	}
 	sort.Slice(socks, func(i, j int) bool {

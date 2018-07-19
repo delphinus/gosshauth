@@ -19,6 +19,12 @@ func NewApp() *cli.App {
 				Usage:   "List up existent & accessible sock files",
 				Action:  List,
 			},
+			{
+				Name:    "fixup",
+				Aliases: []string{"f"},
+				Usage:   "Fix up the link for sock files and export $SSH_AUTH_SOCK",
+				Action:  Fixup,
+			},
 		},
 	}
 }
