@@ -6,6 +6,8 @@ help:
 COMMIT := $(shell git describe --always)
 VERSION := $(shell cat version.go | perl -ne 'print "v$$1" if /Version = "(.+?)"/')
 DIR := pkg/$(VERSION)
+NAME := gosshauth
+REPO := github.com/delphinus/$(NAME)
 
 .PHONY: dep
 dep: ## install dependencies
@@ -21,6 +23,6 @@ build: ## build the binary
 
 .PHONY: release
 release: ## release binaries at GitHub (NOTE: update version.go & the tag before this)
-	gox -os 'darwin linux windows' -arch '386 amd64' -ldflags '-X main.GitCommit=$(COMMIT)' -output '$(DIR)/{{.Dir}}_{{.OS}}_{{.Arch}}/{{.Dir}}'
+	gox -os 'darwin linux' -arch '386 amd64' -ldflags '-X $(REPO).GitCommit=$(COMMIT)' -output '$(DIR)/$(NAME)_{{.OS}}_{{.Arch}}/$(NAME)' github.com/delphinus/gosshauth/cmd
 	bin/zip-binaries $(DIR)
 	ghr -u delphinus $(VERSION) $(DIR)
