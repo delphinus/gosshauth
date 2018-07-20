@@ -3,15 +3,16 @@
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-COMIT := $(shell git describe --always)
+COMMIT := $(shell git describe --always)
 VERSION := $(shell cat version.go | perl -ne 'print "v$$1" if /Version = "(.+?)"/')
 DIR := pkg/$(VERSION)
 
 .PHONY: dep
 dep: ## install dependencies
+	go get -u github.com/blang/semver
 	go get -u github.com/mitchellh/gox
+	go get -u github.com/rhysd/go-github-selfupdate/selfupdate
 	go get -u github.com/tcnksm/ghr
-	go get -u github.com/blang/semver go get github.com/rhysd/go-github-selfupdate/selfupdate
 	go get -u gopkg.in/urfave/cli.v2
 
 .PHONY: build
