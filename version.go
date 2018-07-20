@@ -12,7 +12,7 @@ import (
 const RepoName = "delphinus/gosshauth"
 
 // Version is needed for selfupdate.
-const Version = "0.0.1"
+const Version = "0.0.2"
 
 // GitCommit is needed for selfupdate.
 var GitCommit = ""
