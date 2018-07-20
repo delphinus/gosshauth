@@ -3,12 +3,23 @@
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
+COMIT := $(shell git describe --always)
+VERSION := $(shell cat version.go | perl -ne 'print "v$$1" if /Version = "(.+?)"/')
+DIR := pkg/$(VERSION)
+
 .PHONY: dep
-dep: ## Install dependencies
-	go get gopkg.in/urfave/cli.v2
-	go get github.com/rhysd/go-github-selfupdate/selfupdate
-	go get github.com/blang/semver
+dep: ## install dependencies
+	go get -u github.com/mitchellh/gox
+	go get -u github.com/tcnksm/ghr
+	go get -u github.com/blang/semver go get github.com/rhysd/go-github-selfupdate/selfupdate
+	go get -u gopkg.in/urfave/cli.v2
 
 .PHONY: build
-build: ## Build the binary
+build: ## build the binary
 	go build cmd/gosshauth.go
+
+.PHONY: release
+release: ## release binaries at GitHub (NOTE: update version.go & the tag before this)
+	gox -os 'darwin linux windows' -arch '386 amd64' -ldflags '-X main.GitCommit=$(COMMIT)' -output '$(DIR)/{{.Dir}}_{{.OS}}_{{.Arch}}/{{.Dir}}'
+	bin/zip-binaries $(DIR)
+	ghr -u delphinus $(VERSION) $(DIR)

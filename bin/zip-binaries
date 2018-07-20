@@ -1,0 +1,12 @@
+#!/bin/bash -eu
+TARGET="$1"
+if [[ ! -d $TARGET ]]; then
+    echo directory does not exist: "$TARGET"
+    exit 1
+fi
+cd "$TARGET"
+find . -maxdepth 2 -type f | while read -r i; do
+    zipname=$(basename "$(dirname "$i")")
+    zip -j "$zipname" "$i"
+    rm -r "$zipname"
+done
