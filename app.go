@@ -31,6 +31,11 @@ func NewApp() *cli.App {
 				Usage:   "Fix up the link for sock files and export $SSH_AUTH_SOCK",
 				Action:  Fixup,
 			},
+			{
+				Name:   "selfupdate",
+				Usage:  "Update the binary itself",
+				Action: Selfupdate,
+			},
 		},
 	}
 }
