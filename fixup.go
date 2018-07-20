@@ -1,10 +1,16 @@
 package gosshauth
 
 import (
+	"errors"
 	"fmt"
 
 	"gopkg.in/urfave/cli.v2"
 )
+
+// Shell is an interface to export envs.
+type Shell interface {
+	Export(p string) string
+}
 
 // Fixup is a command action for `fixup`.
 func Fixup(c *cli.Context) error {
@@ -22,6 +28,24 @@ func Fixup(c *cli.Context) error {
 	if err != nil {
 		return err
 	}
-	fmt.Fprintln(c.App.Writer, "export SSH_AUTH_SOCK="+*fullPath)
+	if sh := c.Args().First(); sh != "" {
+		shell, err := detectShell(sh)
+		if err != nil {
+			return err
+		}
+		fmt.Fprintln(c.App.Writer, shell.Export(*fullPath))
+	}
 	return nil
+}
+
+func detectShell(sh string) (shell Shell, err error) {
+	switch sh {
+	case "zsh":
+		shell = ZSH
+	case "bash":
+		shell = BASH
+	default:
+		err = errors.New("unknown shell")
+	}
+	return
 }

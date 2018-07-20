@@ -26,10 +26,14 @@ func NewApp() *cli.App {
 				Action:  List,
 			},
 			{
-				Name:    "fixup",
-				Aliases: []string{"f"},
-				Usage:   "Fix up the link for sock files and export $SSH_AUTH_SOCK",
-				Action:  Fixup,
+				Name:      "fixup",
+				Aliases:   []string{"f"},
+				Usage:     "Fix up the link for sock files",
+				ArgsUsage: "[(none), zsh, bash]",
+				Description: "Check $SSH_AUTH_SOCK and validate it.  " +
+					"When you supply a shell name, print out export setting for it " +
+					"(only if needed).",
+				Action: Fixup,
 			},
 			{
 				Name:   "selfupdate",
