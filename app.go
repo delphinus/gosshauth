@@ -23,7 +23,7 @@ func NewApp() *cli.App {
 				Name:    "list",
 				Aliases: []string{"l"},
 				Usage:   "List up existent & accessible sock files",
-				Action:  List,
+				Action:  actionFunc(List),
 			},
 			{
 				Name:      "fixup",
@@ -33,13 +33,25 @@ func NewApp() *cli.App {
 				Description: "Check $SSH_AUTH_SOCK and validate it.  " +
 					"When you supply a shell name, print out export setting for it " +
 					"(only if needed).",
-				Action: Fixup,
+				Action: actionFunc(Fixup),
 			},
 			{
 				Name:   "selfupdate",
 				Usage:  "Update the binary itself",
-				Action: Selfupdate,
+				Action: actionFunc(Selfupdate),
 			},
 		},
+	}
+}
+
+func actionFunc(f cli.ActionFunc) cli.ActionFunc {
+	return func(c *cli.Context) error {
+		if err := f(c); err != nil {
+			if _, ok := err.(cli.ExitCoder); ok {
+				return err
+			}
+			return cli.Exit(err, 1)
+		}
+		return nil
 	}
 }
