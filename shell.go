@@ -2,6 +2,8 @@ package gosshauth
 
 import (
 	"errors"
+	"os"
+	"path/filepath"
 )
 
 var (
@@ -14,6 +16,7 @@ var (
 // Shell is an interface to export envs.
 type Shell interface {
 	Export(p string) string
+	Hook() string
 }
 
 func detectShell(sh string) (shell Shell, err error) {
@@ -28,4 +31,10 @@ func detectShell(sh string) (shell Shell, err error) {
 		err = ErrUnknownShell
 	}
 	return
+}
+
+// me returns the full path for the executable.
+func me() string {
+	p, _ := filepath.Abs(os.Args[0])
+	return p
 }

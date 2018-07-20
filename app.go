@@ -36,6 +36,14 @@ func NewApp() *cli.App {
 				Action: actionFunc(Fixup),
 			},
 			{
+				Name:      "hook",
+				Usage:     "Show hook script for shells",
+				ArgsUsage: "[zsh, bash]",
+				Description: "Show hook script for supplied shells.  " +
+					"Use as `eval $(gosshauth hook zsh)` to set hooks.",
+				Action: actionFunc(Hook),
+			},
+			{
 				Name:   "selfupdate",
 				Usage:  "Update the binary itself",
 				Action: actionFunc(Selfupdate),
