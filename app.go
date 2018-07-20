@@ -1,11 +1,17 @@
 package gosshauth
 
 import (
+	"fmt"
+
 	"gopkg.in/urfave/cli.v2"
 )
 
 // NewApp makes CLI app.
 func NewApp() *cli.App {
+	cli.VersionPrinter = func(c *cli.Context) {
+		fmt.Fprintf(c.App.Writer, "%v version v%v (%s)\n",
+			c.App.Name, c.App.Version, GitCommit)
+	}
 	return &cli.App{
 		Version: Version,
 		Usage:   "Detect $SSH_AUTH_SOCK and fix the symlink",
