@@ -1,6 +1,7 @@
 package gosshauth
 
 import (
+	"time"
 
 	"gopkg.in/urfave/cli.v2"
 )
@@ -13,6 +14,7 @@ func NewApp() *cli.App {
 		Authors: []*cli.Author{
 			{Name: "JINNOUCHI Yasushi", Email: "delphinus@remora.cx"},
 		},
+		Compiled: time.Unix(compileTime, 0),
 		Commands: []*cli.Command{
 			{
 				Name:    "list",
