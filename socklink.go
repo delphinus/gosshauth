@@ -129,7 +129,7 @@ func SearchSockLinks() (socks SockLinks, err error) {
 		if err != nil {
 			return
 		}
-		if st.Mode()&os.ModeSocket == os.ModeSocket {
+		if st.Mode()&os.ModeSocket != 0 {
 			socks = append(socks, &SockLink{PathString(p), st.ModTime()})
 		}
 	}
