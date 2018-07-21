@@ -3,6 +3,7 @@ package gosshauth
 import (
 	"errors"
 	"os"
+	"os/exec"
 	"path/filepath"
 )
 
@@ -35,6 +36,7 @@ func detectShell(sh string) (shell Shell, err error) {
 
 // me returns the full path for the executable.
 func me() string {
-	p, _ := filepath.Abs(os.Args[0])
+	p, _ := exec.LookPath(os.Args[0])
+	p, _ = filepath.Abs(p)
 	return p
 }
