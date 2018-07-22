@@ -5,7 +5,8 @@ help:
 
 COMMIT := $(shell git describe --always)
 VERSION := $(shell cat version.go | perl -ne 'print "v$$1" if /Version = "(.+?)"/')
-DIR := pkg/$(VERSION)
+PKG := pkg
+DIR := $(PKG)/$(VERSION)
 TIMESTAMP := $(shell date +%s)
 NAME := gosshauth
 
@@ -21,11 +22,18 @@ dep: ## install dependencies
 build: ## build the binary
 	go build
 
-.PHONY: release
-release: ## release binaries at GitHub (NOTE: update version.go & the tag before this)
+.PHONY: clean
+clean: ## clean up built binaries
+	rm -fr $(PKG)
+
+.PHONY: pkg
+pkg: ## build the binaries and store into /pkg
 	gox -os 'darwin linux' -arch '386 amd64' -ldflags '\
 		-X main.GitCommit=$(COMMIT) \
 		-X main.CompileTime=$(TIMESTAMP)' \
 		-output '$(DIR)/$(NAME)_{{.OS}}_{{.Arch}}/$(NAME)'
+
+.PHONY: release
+release: pkg## release binaries at GitHub (NOTE: update version.go & the tag before this)
 	bin/zip-binaries $(DIR)
 	ghr -u delphinus $(VERSION) $(DIR)
