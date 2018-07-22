@@ -1,4 +1,4 @@
-package gosshauth
+package main
 
 import (
 	"errors"
