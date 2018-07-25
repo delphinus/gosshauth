@@ -8,8 +8,12 @@ import (
 	"strings"
 )
 
-// ErrLinkIsValid means it needs not to be fixed up.
-var ErrLinkIsValid = errors.New("Link is valid")
+var (
+	// ErrLinkIsValid means it needs not to be fixed up.
+	ErrLinkIsValid = errors.New("Link is valid")
+	// ErrNotExist means the path in env does not exist.
+	ErrNotExist = errors.New("path does not exist")
+)
 
 // AuthPath will be used for the path suitable for SSH_AUTH_SOCK
 type AuthPath string
@@ -37,7 +41,9 @@ var SSHAuthSockEnv = &EnvPath{os.Getenv("SSH_AUTH_SOCK")}
 
 // FixWith fixes the path by the newest path for sock.
 func (p *EnvPath) FixWith(newest *PathString) error {
-	if isSymlink, err := p.isSymlink(); err != nil {
+	if isSymlink, err := p.isSymlink(); os.IsNotExist(err) {
+		return ErrNotExist
+	} else if err != nil {
 		return err
 	} else if !isSymlink {
 		return p.fixNonSymlink(newest)
