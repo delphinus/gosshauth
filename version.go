@@ -10,8 +10,18 @@ import (
 
 func init() {
 	cli.VersionPrinter = func(c *cli.Context) {
+		rev := GitCommit
+		if rev == "" {
+			rev = "dev"
+		}
+		compiled := ""
+		if c.App.Compiled.Unix() == 0 {
+			compiled = "development"
+		} else {
+			compiled = c.App.Compiled.Format(time.RFC3339)
+		}
 		fmt.Fprintf(c.App.Writer, "%v version v%v (%s) build time: %s\n",
-			c.App.Name, c.App.Version, GitCommit, c.App.Compiled.Format(time.RFC3339))
+			c.App.Name, c.App.Version, rev, compiled)
 	}
 }
 
