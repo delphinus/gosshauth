@@ -26,7 +26,7 @@ func init() {
 }
 
 // Version is needed for selfupdate.
-const Version = "0.0.4"
+const Version = "0.0.5"
 
 // GitCommit is needed for selfupdate.  This will be set in Makefile task.
 var GitCommit = ""
