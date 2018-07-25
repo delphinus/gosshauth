@@ -69,7 +69,7 @@ func (p *EnvPath) fixNonSymlink(newest *PathString) error {
 	if err != nil {
 		return err
 	}
-	return os.Symlink(string(*newest), *fullPath)
+	return symLink(string(*newest), *fullPath)
 }
 
 func (p *EnvPath) fixSymlink(newest *PathString) error {
@@ -82,5 +82,17 @@ func (p *EnvPath) fixSymlink(newest *PathString) error {
 	} else if err := os.Remove(p.path); err != nil {
 		return err
 	}
-	return os.Symlink(string(*newest), p.path)
+	return symLink(string(*newest), p.path)
+}
+
+func symLink(oldname, newname string) error {
+	if _, err := os.Stat(newname); err != nil {
+		if !os.IsNotExist(err) {
+			return err
+		}
+		if err := os.Remove(newname); err != nil {
+			return err
+		}
+	}
+	return os.Symlink(oldname, newname)
 }
