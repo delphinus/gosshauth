@@ -26,6 +26,8 @@ func Fixup(c *cli.Context) (err error) {
 	if err != nil {
 		return err
 	}
-	fmt.Fprintln(c.App.Writer, shell.Export(*fullPath))
+	if shell != nil {
+		fmt.Fprintln(c.App.Writer, shell.Export(*fullPath))
+	}
 	return nil
 }
