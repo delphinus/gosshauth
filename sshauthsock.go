@@ -85,14 +85,16 @@ func (p *EnvPath) fixSymlink(newest *PathString) error {
 	return symLink(string(*newest), p.path)
 }
 
-func symLink(oldname, newname string) error {
-	if _, err := os.Stat(newname); err != nil {
-		if !os.IsNotExist(err) {
-			return err
+func symLink(oldname, newname string) (err error) {
+	switch _, err = os.Stat(newname); {
+	case err == nil:
+		if err = os.Remove(newname); err != nil {
+			return
 		}
-		if err := os.Remove(newname); err != nil {
-			return err
-		}
+	case os.IsNotExist(err):
+		// do nothing
+	default:
+		return
 	}
 	return os.Symlink(oldname, newname)
 }
