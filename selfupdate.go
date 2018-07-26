@@ -2,7 +2,6 @@ package gosshauth
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/blang/semver"
 	"github.com/rhysd/go-github-selfupdate/selfupdate"
@@ -24,7 +23,7 @@ func Selfupdate(c *cli.Context) error {
 		return nil
 	}
 	fmt.Fprintln(c.App.Writer, "updating...", v, "=>", latest.Version)
-	if err := selfupdate.UpdateTo(latest.AssetURL, os.Args[0]); err != nil {
+	if err := selfupdate.UpdateTo(latest.AssetURL, Me()); err != nil {
 		return fmt.Errorf("binary update failed: %v", err)
 	}
 	fmt.Fprintln(c.App.Writer, "successfully updated to version", latest.Version)

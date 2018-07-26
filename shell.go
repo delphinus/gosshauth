@@ -34,9 +34,9 @@ func detectShell(sh string) (shell Shell, err error) {
 	return
 }
 
-// me returns the full path for the executable.
-func me() string {
-	p, _ := exec.LookPath(os.Args[0])
+// Me returns the full path for the executable.
+func Me() (p string) {
+	p, _ = exec.LookPath(os.Args[0])
 	p, _ = filepath.Abs(p)
-	return p
+	return
 }

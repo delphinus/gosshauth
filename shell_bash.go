@@ -12,7 +12,7 @@ func (bash) Export(p string) string {
 func (bash) Hook() string {
 	return `_sshauthsock_hook() {
     local previous_exit_status=$?;
-    eval "$("` + me() + `" fixup bash)";
+    eval "$("` + Me() + `" fixup bash)";
     return $previous_exit_status;
 }
 if ! [[ "$PROMPT_COMMAND" =~ _sshauthsock_hook ]]; then
