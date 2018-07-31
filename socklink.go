@@ -33,11 +33,15 @@ type PathString string
 // IsEvalEqual returns true if the evaled path string is equal to target.
 func (ps *PathString) IsEvalEqual(target *string) (bool, error) {
 	resolved, err := filepath.EvalSymlinks(string(*ps))
-	if err != nil {
+	if os.IsNotExist(err) {
+		return false, nil
+	} else if err != nil {
 		return false, err
 	}
 	resolvedTarget, err := filepath.EvalSymlinks(*target)
-	if err != nil {
+	if os.IsNotExist(err) {
+		return false, nil
+	} else if err != nil {
 		return false, err
 	}
 	return resolved == resolvedTarget, nil
