@@ -1,12 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 	"sort"
-	"strings"
 	"text/template"
 	"time"
 )
@@ -55,7 +53,8 @@ var (
 	lineBreakByte = []byte{'\n'}
 )
 
-func (sls SockLinks) String() string {
+// Print prints out the sock links.
+func (sls SockLinks) Print(w io.Writer) (err error) {
 	var maxPathLen int
 	var paths, modTimes [][]byte
 	for _, s := range sls {
@@ -65,33 +64,30 @@ func (sls SockLinks) String() string {
 			maxPathLen = len(s.Path)
 		}
 	}
-	var out strings.Builder
-	var err error
-	if err = writeHeader(&out, maxPathLen); err != nil {
-		return fmt.Sprintf("error on String(): %v", err)
+	if err = writeHeader(w, maxPathLen); err != nil {
+		return err
 	}
 	for i := 0; i < len(paths); i++ {
-		if err = writeRow(&out, maxPathLen, paths[i], modTimes[i]); err != nil {
-			return fmt.Sprintf("error on String(): %v", err)
+		if err = writeRow(w, maxPathLen, paths[i], modTimes[i]); err != nil {
+			return err
 		}
 	}
-	return out.String()
+	return nil
 }
 
-// WithTemplate returns string by building with the supplied template.
-func (sls SockLinks) WithTemplate(text string) (string, error) {
+// PrintWithTemplate prints out by building with the supplied template.
+func (sls SockLinks) PrintWithTemplate(w io.Writer, text string) error {
 	tmpl, err := template.New("").Parse(text)
 	if err != nil {
-		return "", err
+		return err
 	}
-	var out strings.Builder
 	for i := 0; i < len(sls); i++ {
-		if err := tmpl.Execute(&out, sls[i]); err != nil {
-			return "", err
+		if err := tmpl.Execute(w, sls[i]); err != nil {
+			return err
 		}
-		_ = out.WriteByte('\n')
+		_, _ = w.Write([]byte{'\n'})
 	}
-	return out.String(), nil
+	return nil
 }
 
 func writeRow(out io.Writer, maxLen int, path, modTime []byte) (err error) {
