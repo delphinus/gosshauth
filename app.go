@@ -20,7 +20,15 @@ func NewApp() *cli.App {
 				Name:    "list",
 				Aliases: []string{"l"},
 				Usage:   "List up existent & accessible sock files",
-				Action:  actionFunc(List),
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:    "format",
+						Aliases: []string{"f"},
+						Usage: "Set format for outputting.  " +
+							"You can use {{ .Path }} and {{ .ModTime }} to show info in this.",
+					},
+				},
+				Action: actionFunc(List),
 			},
 			{
 				Name:      "fixup",

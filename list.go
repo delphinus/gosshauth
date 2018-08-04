@@ -12,6 +12,14 @@ func List(c *cli.Context) error {
 	if err != nil {
 		return fmt.Errorf("error in SockLinks: %v", err)
 	}
-	fmt.Fprintf(c.App.Writer, "%s", socks)
+	if tmpl := c.String("format"); tmpl != "" {
+		txt, err := socks.WithTemplate(tmpl)
+		if err != nil {
+			return fmt.Errorf("error in the supplied template: %s", err)
+		}
+		fmt.Fprintf(c.App.Writer, "%s", txt)
+	} else {
+		fmt.Fprintf(c.App.Writer, "%s", socks)
+	}
 	return nil
 }

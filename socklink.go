@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"text/template"
 	"time"
 )
 
@@ -75,6 +76,22 @@ func (sls SockLinks) String() string {
 		}
 	}
 	return out.String()
+}
+
+// WithTemplate returns string by building with the supplied template.
+func (sls SockLinks) WithTemplate(text string) (string, error) {
+	tmpl, err := template.New("").Parse(text)
+	if err != nil {
+		return "", err
+	}
+	var out strings.Builder
+	for i := 0; i < len(sls); i++ {
+		if err := tmpl.Execute(&out, sls[i]); err != nil {
+			return "", err
+		}
+		_ = out.WriteByte('\n')
+	}
+	return out.String(), nil
 }
 
 func writeRow(out io.Writer, maxLen int, path, modTime []byte) (err error) {
