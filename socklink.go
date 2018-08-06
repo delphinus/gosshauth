@@ -1,12 +1,18 @@
 package main
 
 import (
+	"errors"
 	"io"
 	"os"
 	"path/filepath"
 	"sort"
 	"text/template"
 	"time"
+)
+
+var (
+	// ErrNoSocks means socks do not exist
+	ErrNoSocks = errors.New("no socks exist")
 )
 
 // SockLink is info for sock symlinks of SSH.
@@ -139,6 +145,8 @@ func SearchSockLinks() (socks SockLinks, err error) {
 	paths, err = filepath.Glob(sockLinksGlob)
 	if err != nil {
 		return
+	} else if len(paths) == 0 {
+		return nil, ErrNoSocks
 	}
 	for _, p := range paths {
 		var st os.FileInfo

@@ -13,7 +13,9 @@ func Fixup(c *cli.Context) (err error) {
 		return err
 	}
 	socks, err := SearchSockLinks()
-	if err != nil {
+	if err == ErrNoSocks {
+		return nil // if no socks exist, it does nothing.
+	} else if err != nil {
 		return err
 	}
 	err = SSHAuthSockEnv.FixWith(&socks.Newest().Path)
