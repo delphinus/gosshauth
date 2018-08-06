@@ -142,10 +142,14 @@ func lineBreak(out io.Writer) error {
 // descendant.
 func SearchSockLinks() (socks SockLinks, err error) {
 	var paths []string
-	paths, err = filepath.Glob(sockLinksGlob)
-	if err != nil {
-		return
-	} else if len(paths) == 0 {
+	for _, g := range sockLinksGlobs {
+		var p []string
+		if p, err = filepath.Glob(g); err != nil {
+			return
+		}
+		paths = append(paths, p...)
+	}
+	if len(paths) == 0 {
 		return nil, ErrNoSocks
 	}
 	for _, p := range paths {

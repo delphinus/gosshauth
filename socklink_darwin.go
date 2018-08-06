@@ -1,3 +1,6 @@
 package main
 
-const sockLinksGlob = "/tmp/**/Listeners"
+var sockLinksGlobs = []string{
+	"/tmp/**/Listeners",
+	"/tmp/ssh*/agent*",
+}
