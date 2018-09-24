@@ -45,6 +45,8 @@ this.
 Here is `gosshauth`.  You can install this from [release page][] or a command
 below.
 
+[release page]: https://github.com/delphinus/gosshauth/releases
+
 ```sh
 go get github.com/delphinus/gosshauth
 ```
