@@ -10,14 +10,6 @@ DIR := $(PKG)/$(VERSION)
 TIMESTAMP := $(shell date +%s)
 NAME := gosshauth
 
-.PHONY: dep
-dep: ## install dependencies
-	go get -u github.com/blang/semver
-	go get -u github.com/mitchellh/gox
-	go get -u github.com/rhysd/go-github-selfupdate/selfupdate
-	go get -u github.com/tcnksm/ghr
-	go get -u gopkg.in/urfave/cli.v2
-
 .PHONY: build
 build: ## build the binary
 	go build
