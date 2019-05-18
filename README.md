@@ -80,7 +80,7 @@ Now you can use SSH authentication even if in the way above.
 
 ## Author
 
-JINNOUCHI Yasushi &lt;delphinus@remora.cx&gt;
+JINNOUCHI Yasushi &lt;me@delphinus.dev&gt;
 
 ## License
 
