@@ -12,7 +12,7 @@ func NewApp() *cli.App {
 		Version: Version,
 		Usage:   "Detect $SSH_AUTH_SOCK and fix the symlink",
 		Authors: []*cli.Author{
-			{Name: "JINNOUCHI Yasushi", Email: "delphinus@remora.cx"},
+			{Name: "JINNOUCHI Yasushi", Email: "me@delphinus.dev"},
 		},
 		Compiled: time.Unix(compileTime, 0),
 		Commands: []*cli.Command{
