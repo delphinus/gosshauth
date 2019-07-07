@@ -21,7 +21,7 @@ func Fixup(c *cli.Context) (err error) {
 	err = SSHAuthSockEnv.FixWith(&socks.Newest().Path)
 	if err == ErrLinkIsValid {
 		return nil
-	} else if err != nil && err != ErrNotExist {
+	} else if err != nil {
 		return err
 	}
 	fullPath, err := SSHAuthSockPath.FullPath()
