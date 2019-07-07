@@ -10,6 +10,11 @@ DIR := $(PKG)/$(VERSION)
 TIMESTAMP := $(shell date +%s)
 NAME := gosshauth
 
+.PHONY: dep
+dep: ## install dependencies
+	go get -u github.com/mitchellh/gox
+	go get -u github.com/tcnksm/ghr
+
 .PHONY: build
 build: ## build the binary
 	go build
