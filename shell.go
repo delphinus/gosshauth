@@ -26,6 +26,8 @@ func detectShell(sh string) (shell Shell, err error) {
 		shell = ZSH
 	case "bash":
 		shell = BASH
+	case "fish":
+		shell = FISH
 	case "":
 		err = ErrNoShell
 	default:
