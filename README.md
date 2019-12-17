@@ -53,15 +53,24 @@ go get github.com/delphinus/gosshauth
 
 And you should set the hook for zsh/bash.
 
-```zsh
+```bash
 # for bash
 if which gosshauth > /dev/null 2>&1; then
   eval "$(gosshauth hook bash)"
 fi
+```
 
+```zsh
 # for zsh
 if (( $+commands[gosshauth] )); then
   eval "$(gosshauth hook zsh)"
+fi
+```
+
+```fish
+# for fish
+if type -q gosshauth > /dev/null; then
+  eval (gosshauth hook fish)
 fi
 ```
 
