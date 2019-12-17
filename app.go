@@ -34,7 +34,7 @@ func NewApp() *cli.App {
 				Name:      "fixup",
 				Aliases:   []string{"f"},
 				Usage:     "Fix up the link for sock files",
-				ArgsUsage: "[(none), zsh, bash]",
+				ArgsUsage: "[(none), zsh, bash, fish]",
 				Description: "Check $SSH_AUTH_SOCK and validate it.  " +
 					"When you supply a shell name, print out export setting for it " +
 					"(only if needed).",
@@ -43,7 +43,7 @@ func NewApp() *cli.App {
 			{
 				Name:      "hook",
 				Usage:     "Show hook script for shells",
-				ArgsUsage: "[zsh, bash]",
+				ArgsUsage: "[zsh, bash, fish]",
 				Description: "Show hook script for supplied shells.  " +
 					"Use as `eval $(gosshauth hook zsh)` to set hooks.",
 				Action: actionFunc(Hook),

@@ -11,7 +11,7 @@ var (
 	// ErrUnknownShell means it is not a known shell.
 	ErrUnknownShell = errors.New("unknown shell")
 	// ErrNoShell means it lacks a shell string.
-	ErrNoShell = errors.New("shell name needed: [zsh, bash]")
+	ErrNoShell = errors.New("shell name needed: [zsh, bash, fish]")
 )
 
 // Shell is an interface to export envs.
