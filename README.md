@@ -69,9 +69,9 @@ fi
 
 ```fish
 # for fish
-if type -q gosshauth > /dev/null; then
-  eval (gosshauth hook fish)
-fi
+if type -q gosshauth
+  gosshauth hook fish | source
+end
 ```
 
 Now you can use SSH authentication even if in the way above.
